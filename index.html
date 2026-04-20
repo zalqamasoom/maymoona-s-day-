@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memories for My Jan ❤️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background: #fff0f5; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .box { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid #ffb6c1; position: relative; z-index: 10; }
+        
+        /* Pattern Style */
+        .pattern-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 180px; margin: 20px auto; }
+        .dot { width: 22px; height: 22px; background: #ffe4e1; border: 2px solid #ffb6c1; border-radius: 50%; cursor: pointer; transition: 0.3s; margin: auto; }
+        .dot.active { background: #ff1493; border-color: #ff1493; transform: scale(1.2); box-shadow: 0 0 10px #ff1493; }
+
+        /* Slideshow Layout */
+        #slideshow-screen { display: none; width: 100%; height: 100%; position: fixed; top: 0; left: 0; background: #fff0f5; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
+        .slide { display: none; animation: zoomIn 0.8s ease; width: 85%; max-width: 380px; }
+        .slide img { width: 100%; height: 350px; object-fit: cover; border-radius: 15px; border: 6px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .caption { background: white; padding: 15px; border-radius: 12px; margin-top: 15px; color: #d02090; font-weight: bold; border: 1px solid #ffb6c1; font-size: 15px; line-height: 1.4; }
+        
+        .nav-btn { margin-top: 20px; padding: 12px 30px; background: #ff69b4; color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; z-index: 30; }
+        .nav-btn:hover { background: #ff1493; transform: scale(1.05); }
+
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Balloons */
+        .balloon { position: absolute; bottom: -100px; width: 40px; height: 55px; border-radius: 50%; animation: floatUp 6s linear infinite; opacity: 0.6; pointer-events: none; }
+        @keyframes floatUp { to { transform: translateY(-110vh) rotate(25deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen" class="box">
+        <h2 style="color: #d02090;">Draw "M" to See Memories ❤️</h2>
+        <div class="pattern-grid">
+            <div class="dot" onclick="mark(this, '1')"></div><div></div><div class="dot" onclick="mark(this, '3')"></div>
+            <div class="dot" onclick="mark(this, '4')"></div><div class="dot" onclick="mark(this, '5')"></div><div class="dot" onclick="mark(this, '6')"></div>
+            <div class="dot" onclick="mark(this, '7')"></div><div></div><div class="dot" onclick="mark(this, '9')"></div>
+        </div>
+        <button class="nav-btn" onclick="checkPattern()">Unlock ✨</button>
+    </div>
+
+    <div id="slideshow-screen">
+        <div class="slide" id="slide0"><img src="1.jpg"><div class="caption">Memory 1: Hayee januuu! ✨</div></div>
+        <div class="slide" id="slide1"><img src="2.jpg"><div class="caption">Memory 2: Kitne cute lag rahe hain yahan! 🥰</div></div>
+        <div class="slide" id="slide2"><img src="3.jpg"><div class="caption">Memory 3: Ye din hamesha yaad rahega. 🌸</div></div>
+        <div class="slide" id="slide3"><img src="4.jpg"><div class="caption">Memory 4: zindgi meri! ❤️</div></div>
+        <div class="slide" id="slide4"><img src="5.jpg"><div class="caption">Memory 5: You look like a doll here! 🎀</div></div>
+        <div class="slide" id="slide5"><img src="6.jpg"><div class="caption">Memory 6: Hamesha sath rehna. 🤝</div></div>
+        <div class="slide" id="slide6"><img src="7.jpg"><div class="caption">Memory 7:jan merii! 🫂</div></div>
+        <div class="slide" id="slide7"><img src="8.jpg"><div class="caption">Memory 8: Hasi mazaaq wali pics! 😂</div></div>
+        <div class="slide" id="slide8"><img src="9.jpg"><div class="caption">Memory 9: Meri jan, meri dunya! 🌍</div></div>
+        <div class="slide" id="slide9"><img src="10.jpg"><div class="caption">Memory 10: Happy 18th Birthday Chuze! 🐣</div></div>
+        
+        <div id="final-wish" class="slide">
+            <h1 style="color: #ff1493;">HAPPY BIRTHDAY MY JAN! 🎂</h1>
+            <div class="caption" style="text-align: center; background: #fff5f7;">
+                I love u mery bachyy hmesha kush rho merii jannn.. mera chuza bara hogya h or mery sth rehna hmesha! ❤️ 
+                <br><br>
+                <b>FINALLY 18+ YAYAYAYAYYAY! 🥳🎉💃🎈🎊✨</b>
+            </div>
+        </div>
+
+        <button id="nextBtn" class="nav-btn" onclick="nextSlide()">Next Memory ✨</button>
+    </div>
+
+<script>
+    let pattern = [];
+    function mark(el, id) {
+        el.classList.add('active');
+        if(!pattern.includes(id)) pattern.push(id);
+    }
+
+    function checkPattern() {
+        // M check: top-left(1), mid-left(4), bottom-left(7), center(5), top-right(3), mid-right(6), bottom-right(9)
+        if (pattern.length >= 5) {
+            document.getElementById('lock-screen').style.display = 'none';
+            document.getElementById('slideshow-screen').style.display = 'flex';
+            showSlide(0);
+            startBalloons();
+        } else {
+            alert("Pattern incomplete! Draw a proper 'M'.");
+            pattern = [];
+            document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+        }
+    }
+
+    let currentSlide = 0;
+    const totalSlides = 11; 
+
+    function showSlide(n) {
+        document.querySelectorAll('.slide').forEach(s => s.style.display = 'none');
+        let s = document.getElementById('slide' + n);
+        if(s) s.style.display = 'block';
+        
+        if(n === totalSlides - 1) {
+            document.getElementById('final-wish').style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'none';
+            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+        }
+    }
+
+    function nextSlide() {
+        currentSlide++;
+        showSlide(currentSlide);
+    }
+
+    function startBalloons() {
+        setInterval(() => {
+            let b = document.createElement("div");
+            b.className = "balloon";
+            b.style.left = Math.random() * 100 + "vw";
+            b.style.background = ["#ff69b4", "#ffb6c1", "#ff1493", "#ffc0cb"][Math.floor(Math.random()*4)];
+            document.body.appendChild(b);
+            setTimeout(() => b.remove(), 6000);
+        }, 400);
+    }
+</script>
+</body>
+</html>
